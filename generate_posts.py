@@ -1,20 +1,24 @@
 import json
 from datetime import datetime
 import os
+import re
 
-# Load summarized articles
+def sanitize_filename(title):
+    return re.sub(r'[^a-zA-Z0-9-]', '', title.replace(' ', '-').lower())[:50]
+
 with open("summarized_articles.json", "r") as f:
     articles = json.load(f)
 
-# Create a folder for posts
-os.makedirs("posts", exist_ok=True)
+os.makedirs("_posts", exist_ok=True)
 
-# Generate markdown files for Jekyll
 for article in articles:
-    filename = f"posts/{datetime.now().strftime('%Y-%m-%d')}-{article['title'][:20].replace(' ', '-').lower()}.md"
+    date_str = datetime.now().strftime('%Y-%m-%d')
+    clean_title = sanitize_filename(article['title'])
+    filename = f"_posts/{date_str}-{clean_title}.md"
+    
     content = f"""---
 title: "{article['title']}"
-date: {datetime.now().strftime('%Y-%m-%d')}
+date: {date_str}
 ---
 
 {article['summary']}
