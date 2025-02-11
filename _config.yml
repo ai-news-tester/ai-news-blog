@@ -1,3 +1,4 @@
-theme: minima
 title: AI News Blog
-description: Auto-generated AI news summaries.
+theme: minima
+plugins:
+  - jekyll-feed
