@@ -8,7 +8,8 @@ jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Grant write access
+      contents: write  # Required for pushing to gh-pages
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,5 +38,6 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}  # Use default token with write access
-          publish_dir: ./posts
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_posts  # Changed from 'posts' to '_posts'
+          destination_dir: ./     # Deploy to root of gh-pages
