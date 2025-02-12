@@ -1,4 +1,4 @@
-title: AI News Blog
+title: news
 theme: minima
 plugins:
   - jekyll-feed
