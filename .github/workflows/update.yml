@@ -20,15 +20,10 @@ jobs:
           python-version: '3.x'
 
       - name: Install dependencies
-        run: pip install feedparser requests newspaper3k
+        run: pip install feedparser
 
       - name: Fetch news
         run: python fetch_news.py
-
-      - name: Summarize articles
-        env:
-          HUGGINGFACE_TOKEN: ${{ secrets.HUGGINGFACE_TOKEN }}
-        run: python summarize.py
 
       - name: Generate posts
         run: python generate_posts.py
