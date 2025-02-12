@@ -33,13 +33,11 @@ jobs:
       - name: Generate posts
         run: python generate_posts.py
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          destination_dir: ./
-          exclude_assets: |
-            *.py
-            *.json
-            .github/
+      - - name: Deploy to GitHub Pages
+  uses: peaceiris/actions-gh-pages@v3
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    publish_dir: ./_posts  # Only deploy posts
+    destination_dir: ./_posts
+    keep_files: false      # Clear old posts
+    force_orphan: true     # Force clean deploy
