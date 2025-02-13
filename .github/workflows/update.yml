@@ -38,6 +38,5 @@ jobs:
             *.py
             *.json
             .github/
-            .gitignore
             README.md
             articles.json
