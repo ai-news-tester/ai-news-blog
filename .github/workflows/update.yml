@@ -33,6 +33,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          destination_dir: .  # Ensure this points to the directory with index.md
           keep_files: false
           force_orphan: true
