@@ -1,5 +1,1 @@
 
-echo "" > .nojekyll
-git add .nojekyll
-git commit -m "Add .nojekyll for static site"
-git push
