@@ -1,4 +1,3 @@
-# fetch_news.py
 import feedparser
 import requests
 import json
