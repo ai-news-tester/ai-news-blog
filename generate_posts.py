@@ -1,30 +1,32 @@
+# generate_posts.py
 import json
-from datetime import datetime
 import os
 import re
+from datetime import datetime
 
-def sanitize_title(title):
-    return re.sub(r'[^a-zA-Z0-9-]', '', title.lower())[:50]
+def clean_filename(title):
+    return re.sub(r'[^\w-]', '', title.lower())[:50]
 
-with open("articles.json", "r") as f:
+with open("articles.json") as f:
     articles = json.load(f)
 
 os.makedirs("_posts", exist_ok=True)
 
 for article in articles:
-    # Use publication date from feed if available
-    date_str = article.get('date', datetime.now().strftime('%Y-%m-%d'))
-    clean_title = sanitize_title(article['title'])
-    filename = f"_posts/{date_str}-{clean_title}.md"
+    try:
+        date = datetime.fromisoformat(article["date"]).strftime("%Y-%m-%d")
+    except:
+        date = datetime.now().strftime("%Y-%m-%d")
+        
+    filename = f"_posts/{date}-{clean_filename(article['title'])}.md"
     
     content = f"""---
 title: "{article['title']}"
-date: {date_str}
+date: {date}
+source: {article.get('source', 'RSS Feed')}
 ---
 
-{article['content']}
-
-[Read full article]({article['link']})
+{article['content'][:500]}... [Read full article]({article['link']})
 """
     with open(filename, "w") as f:
         f.write(content)
