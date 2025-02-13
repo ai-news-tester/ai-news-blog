@@ -12,14 +12,11 @@ seen_urls = set()
 def get_hash(url):
     return hashlib.md5(url.encode()).hexdigest()
 
-# API Sources
 def fetch_newsapi():
-    """NewsAPI (100 requests/day free)"""
     try:
         response = requests.get(
             f"https://newsapi.org/v2/everything?q=AI&language=en&apiKey={os.environ['NEWSAPI_KEY']}&pageSize=5"
         )
-        print(f"NewsAPI response: {response.json()}")
         return [{
             'title': a['title'],
             'link': a['url'],
@@ -31,12 +28,10 @@ def fetch_newsapi():
         return []
 
 def fetch_gnews():
-    """GNews API (100 requests/day free)"""
     try:
         response = requests.get(
             f"https://gnews.io/api/v4/search?q=AI&lang=en&token={os.environ['GNEWS_TOKEN']}"
         )
-        print(f"GNews response: {response.json()}")
         return [{
             'title': a['title'],
             'link': a['url'],
@@ -48,12 +43,10 @@ def fetch_gnews():
         return []
 
 def fetch_guardian():
-    """The Guardian API (5k requests/month free)"""
     try:
         response = requests.get(
             f"https://content.guardianapis.com/search?q=AI&api-key={os.environ['GUARDIAN_KEY']}&show-fields=body"
         )
-        print(f"Guardian response: {response.json()}")
         return [{
             'title': r['webTitle'],
             'link': r['webUrl'],
@@ -64,7 +57,6 @@ def fetch_guardian():
         print(f"Guardian Error: {str(e)}")
         return []
 
-# RSS Sources
 RSS_FEEDS = [
     ('TechCrunch AI', 'https://techcrunch.com/category/artificial-intelligence/feed/'),
     ('MIT Tech Review', 'https://www.technologyreview.com/topic/artificial-intelligence/feed/'),
@@ -78,7 +70,6 @@ def fetch_rss():
     for name, url in RSS_FEEDS:
         try:
             feed = feedparser.parse(url)
-            print(f"Parsing RSS feed: {name}")
             for entry in feed.entries[:5]:
                 if get_hash(entry.link) not in seen_urls:
                     articles.append({
@@ -100,8 +91,5 @@ all_articles += fetch_guardian()
 all_articles += fetch_rss()
 
 print(f"Total articles fetched: {len(all_articles)}")
-print(f"Articles: {all_articles}")
-
-# Save results
 with open("articles.json", "w") as f:
     json.dump(all_articles[:MAX_ARTICLES], f)
