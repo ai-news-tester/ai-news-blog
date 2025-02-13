@@ -2,8 +2,8 @@
 layout: home
 ---
 
-# OKLatest AI News
+# Latest noAI News
 
 {% for post in site.posts %}
-- [{{ post.title }}]({{ post.url }}) ({{ post.date | date_to_string }})
+- [{{ post.title }}]({{ post.url }})
 {% endfor %}
