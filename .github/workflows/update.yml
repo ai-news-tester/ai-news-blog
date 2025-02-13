@@ -1,7 +1,8 @@
+# .github/workflows/update.yml
 name: Update Blog
 on:
   schedule:
-    - cron: '0 0 * * *'  # Daily at midnight UTC
+    - cron: "0 0 * * *"  # Daily at midnight UTC
   workflow_dispatch:
 
 jobs:
@@ -9,30 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+      
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
-        run: pip install feedparser
-
-      - name: Fetch news
-        run: python fetch_news.py
-
-      - name: Generate posts
-        run: python generate_posts.py
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_posts
-          destination_dir: ./_posts
-          keep_files: false
-          force_orphan: true
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+        
+    - name: Install dependencies
+      run: pip install feedparser requests
+      
+    - name: Fetch news
+      env:
+        NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+        GNEWS_TOKEN: ${{ secrets.GNEWS_TOKEN }}
+      run: python fetch_news.py
+      
+    - name: Generate posts
+      run: python generate_posts.py
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        exclude_assets: |
+          *.py
+          *.json
+          .github/
