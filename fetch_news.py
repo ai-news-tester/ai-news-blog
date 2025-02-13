@@ -1,3 +1,4 @@
+# fetch_news.py
 import feedparser
 import requests
 import json
@@ -5,54 +6,72 @@ import hashlib
 import os
 from datetime import datetime
 
-# Configuration
+SOURCES = {
+    "rss": [
+        ("TechCrunch AI", "https://techcrunch.com/category/artificial-intelligence/feed/"),
+        ("MIT Tech Review", "https://www.technologyreview.com/topic/artificial-intelligence/feed/"),
+        ("Arxiv AI Papers", "http://export.arxiv.org/rss/cs.AI")
+    ],
+    "api": [
+        ("NewsAPI", "https://newsapi.org/v2/everything?q=AI&apiKey={key}&pageSize=5"),
+        ("GNews", "https://gnews.io/api/v4/search?q=AI&token={key}&max=3")
+    ]
+}
+
 seen_urls = set()
 
 def get_hash(url):
     return hashlib.md5(url.encode()).hexdigest()
 
-def fetch_rss_feeds():
-    """Get articles from free RSS feeds"""
-    sources = [
-        ('MIT Tech Review', 'https://www.technologyreview.com/topic/artificial-intelligence/feed/'),
-        ('TechCrunch', 'https://techcrunch.com/category/artificial-intelligence/feed/'),
-        ('Arxiv', 'http://export.arxiv.org/rss/cs.AI')
-    ]
-    
+def fetch_rss():
     articles = []
-    for name, url in sources:
+    for name, url in SOURCES["rss"]:
         try:
             feed = feedparser.parse(url)
-            for entry in feed.entries[:3]:  # Get top 3 per feed
+            for entry in feed.entries[:3]:
                 if get_hash(entry.link) not in seen_urls:
                     articles.append({
-                        'title': entry.title,
-                        'link': entry.link,
-                        'content': entry.get('description', ''),
-                        'source': name
+                        "title": entry.title,
+                        "link": entry.link,
+                        "content": entry.get("description", ""),
+                        "date": entry.get("published", datetime.now().isoformat())
                     })
                     seen_urls.add(get_hash(entry.link))
-        except:
-            pass
+        except Exception as e:
+            print(f"RSS Error ({name}): {str(e)}")
     return articles
 
-def fetch_newsapi():
-    """NewsAPI - 1 request/day"""
+def fetch_api():
+    articles = []
     try:
-        url = f"https://newsapi.org/v2/everything?q=AI&language=en&apiKey={os.environ['NEWSAPI_KEY']}&pageSize=5"
-        response = requests.get(url)
-        return [{
-            'title': a['title'],
-            'link': a['url'],
-            'content': a['content'],
-            'source': 'NewsAPI'
-        } for a in response.json().get('articles', [])[:3]]  # Top 3
-    except:
-        return []
+        # NewsAPI
+        newsapi_url = SOURCES["api"][0][1].format(key=os.environ["NEWSAPI_KEY"])
+        newsapi_res = requests.get(newsapi_url).json()
+        for article in newsapi_res.get("articles", [])[:3]:
+            if get_hash(article["url"]) not in seen_urls:
+                articles.append({
+                    "title": article["title"],
+                    "link": article["url"],
+                    "content": article["description"],
+                    "date": article["publishedAt"]
+                })
+                
+        # GNews
+        gnews_url = SOURCES["api"][1][1].format(key=os.environ["GNEWS_TOKEN"])
+        gnews_res = requests.get(gnews_url).json()
+        for article in gnews_res.get("articles", [])[:2]:
+            if get_hash(article["url"]) not in seen_urls:
+                articles.append({
+                    "title": article["title"],
+                    "link": article["url"],
+                    "content": article["content"],
+                    "date": article["publishedAt"]
+                })
+    except Exception as e:
+        print(f"API Error: {str(e)}")
+    return articles
 
-# Main execution
-all_articles = fetch_rss_feeds() + fetch_newsapi()
-
-# Save results
-with open("articles.json", "w") as f:
-    json.dump(all_articles[:10], f)  # Max 10 articles/day
+if __name__ == "__main__":
+    all_articles = fetch_rss() + fetch_api()
+    with open("articles.json", "w") as f:
+        json.dump(all_articles[:10], f)  # Max 10 articles/day
