@@ -1,4 +1,4 @@
-title: news
+title: AI News Aggregator
 theme: minima
 plugins:
   - jekyll-feed
