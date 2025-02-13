@@ -5,72 +5,103 @@ import hashlib
 import os
 from datetime import datetime
 
-SOURCES = {
-    "rss": [
-        ("TechCrunch AI", "https://techcrunch.com/category/artificial-intelligence/feed/"),
-        ("MIT Tech Review", "https://www.technologyreview.com/topic/artificial-intelligence/feed/"),
-        ("Arxiv AI Papers", "http://export.arxiv.org/rss/cs.AI")
-    ],
-    "api": [
-        ("NewsAPI", "https://newsapi.org/v2/everything?q=AI&apiKey={key}&pageSize=5"),
-        ("GNews", "https://gnews.io/api/v4/search?q=AI&token={key}&max=3")
-    ]
-}
-
+# Configuration
+MAX_ARTICLES = 15  # Total articles per run
 seen_urls = set()
 
 def get_hash(url):
     return hashlib.md5(url.encode()).hexdigest()
 
+# API Sources
+def fetch_newsapi():
+    """NewsAPI (100 requests/day free)"""
+    try:
+        response = requests.get(
+            f"https://newsapi.org/v2/everything?q=AI&language=en&apiKey={os.environ['NEWSAPI_KEY']}&pageSize=5"
+        )
+        print(f"NewsAPI response: {response.json()}")
+        return [{
+            'title': a['title'],
+            'link': a['url'],
+            'content': a['description'],
+            'source': 'NewsAPI'
+        } for a in response.json().get('articles', [])[:3]]
+    except Exception as e:
+        print(f"NewsAPI Error: {str(e)}")
+        return []
+
+def fetch_gnews():
+    """GNews API (100 requests/day free)"""
+    try:
+        response = requests.get(
+            f"https://gnews.io/api/v4/search?q=AI&lang=en&token={os.environ['GNEWS_TOKEN']}"
+        )
+        print(f"GNews response: {response.json()}")
+        return [{
+            'title': a['title'],
+            'link': a['url'],
+            'content': a['content'],
+            'source': 'GNews'
+        } for a in response.json().get('articles', [])[:3]]
+    except Exception as e:
+        print(f"GNews Error: {str(e)}")
+        return []
+
+def fetch_guardian():
+    """The Guardian API (5k requests/month free)"""
+    try:
+        response = requests.get(
+            f"https://content.guardianapis.com/search?q=AI&api-key={os.environ['GUARDIAN_KEY']}&show-fields=body"
+        )
+        print(f"Guardian response: {response.json()}")
+        return [{
+            'title': r['webTitle'],
+            'link': r['webUrl'],
+            'content': r['fields']['body'] if 'fields' in r else '',
+            'source': 'The Guardian'
+        } for r in response.json().get('response', {}).get('results', [])[:3]]
+    except Exception as e:
+        print(f"Guardian Error: {str(e)}")
+        return []
+
+# RSS Sources
+RSS_FEEDS = [
+    ('TechCrunch AI', 'https://techcrunch.com/category/artificial-intelligence/feed/'),
+    ('MIT Tech Review', 'https://www.technologyreview.com/topic/artificial-intelligence/feed/'),
+    ('Arxiv AI Papers', 'http://export.arxiv.org/rss/cs.AI'),
+    ('Wired AI', 'https://www.wired.com/feed/tag/ai/latest/rss'),
+    ('VentureBeat AI', 'https://venturebeat.com/category/ai/feed/')
+]
+
 def fetch_rss():
     articles = []
-    for name, url in SOURCES["rss"]:
+    for name, url in RSS_FEEDS:
         try:
             feed = feedparser.parse(url)
-            for entry in feed.entries[:3]:
+            print(f"Parsing RSS feed: {name}")
+            for entry in feed.entries[:5]:
                 if get_hash(entry.link) not in seen_urls:
                     articles.append({
-                        "title": entry.title,
-                        "link": entry.link,
-                        "content": entry.get("description", ""),
-                        "date": entry.get("published", datetime.now().isoformat())
+                        'title': entry.title,
+                        'link': entry.link,
+                        'content': entry.get('description', ''),
+                        'source': name
                     })
                     seen_urls.add(get_hash(entry.link))
         except Exception as e:
             print(f"RSS Error ({name}): {str(e)}")
     return articles
 
-def fetch_api():
-    articles = []
-    try:
-        # NewsAPI
-        newsapi_url = SOURCES["api"][0][1].format(key=os.environ["NEWSAPI_KEY"])
-        newsapi_res = requests.get(newsapi_url).json()
-        for article in newsapi_res.get("articles", [])[:3]:
-            if get_hash(article["url"]) not in seen_urls:
-                articles.append({
-                    "title": article["title"],
-                    "link": article["url"],
-                    "content": article["description"],
-                    "date": article["publishedAt"]
-                })
-                
-        # GNews
-        gnews_url = SOURCES["api"][1][1].format(key=os.environ["GNEWS_TOKEN"])
-        gnews_res = requests.get(gnews_url).json()
-        for article in gnews_res.get("articles", [])[:2]:
-            if get_hash(article["url"]) not in seen_urls:
-                articles.append({
-                    "title": article["title"],
-                    "link": article["url"],
-                    "content": article["content"],
-                    "date": article["publishedAt"]
-                })
-    except Exception as e:
-        print(f"API Error: {str(e)}")
-    return articles
+# Main execution
+all_articles = []
+all_articles += fetch_newsapi()
+all_articles += fetch_gnews()
+all_articles += fetch_guardian()
+all_articles += fetch_rss()
 
-if __name__ == "__main__":
-    all_articles = fetch_rss() + fetch_api()
-    with open("articles.json", "w") as f:
-        json.dump(all_articles[:10], f)  # Max 10 articles/day
+print(f"Total articles fetched: {len(all_articles)}")
+print(f"Articles: {all_articles}")
+
+# Save results
+with open("articles.json", "w") as f:
+    json.dump(all_articles[:MAX_ARTICLES], f)
