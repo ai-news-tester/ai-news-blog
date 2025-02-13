@@ -31,13 +31,13 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./  # Deploy entire repo
-        destination_dir: ./ 
-        exclude_assets: |
-          *.py
-          *.json
-          .github/
-          .gitignore
-          README.md
-          articles.json
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          destination_dir: ./
+          exclude_assets: |
+            *.py
+            *.json
+            .github/
+            .gitignore
+            README.md
+            articles.json
