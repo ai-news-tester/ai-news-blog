@@ -35,9 +35,9 @@ jobs:
         publish_dir: ./  # Deploy entire repo
         destination_dir: ./ 
         exclude_assets: |
-      *.py
-      *.json
-      .github/
-      .gitignore
-      README.md
-      articles.json
+          *.py
+          *.json
+          .github/
+          .gitignore
+          README.md
+          articles.json
