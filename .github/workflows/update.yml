@@ -32,7 +32,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_posts
-          destination_dir: ./_posts
+          publish_dir: .
+          destination_dir: .  # Ensure this points to the directory with index.md
           keep_files: false
           force_orphan: true
