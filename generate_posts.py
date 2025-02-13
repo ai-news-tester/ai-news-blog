@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 def clean_filename(title):
-    return re.sub(r'[^\w-]', '', title.lower())[:40]
+    return re.sub(r'[^\w-]', '', title.lower())[:40]  # Ensure filenames are short
 
 with open("articles.json") as f:
     articles = json.load(f)
