@@ -32,11 +32,11 @@ jobs:
     - name: Generate posts
       run: python generate_posts.py
       
-- name: Deploy to GitHub Pages
-  uses: peaceiris/actions-gh-pages@v3
-  with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
-    publish_dir: ./_posts       # Changed from ./
-    destination_dir: ./_posts   # Changed from ./
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
+      publish_dir: ./_posts       # Changed from ./
+      destination_dir: ./_posts   # Changed from ./
     keep_files: false
     force_orphan: true
