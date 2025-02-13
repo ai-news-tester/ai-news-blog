@@ -3,7 +3,6 @@ import requests
 import json
 import hashlib
 import os
-from datetime import datetime
 
 # Configuration
 MAX_ARTICLES = 15  # Total articles per run
@@ -91,6 +90,5 @@ all_articles += fetch_guardian()
 all_articles += fetch_rss()
 
 print(f"Total articles fetched: {len(all_articles)}")
-# Ensure articles.json is saved in the root directory
 with open("articles.json", "w") as f:
     json.dump(all_articles[:MAX_ARTICLES], f)
