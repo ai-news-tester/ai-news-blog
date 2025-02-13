@@ -5,8 +5,10 @@ import re
 from datetime import datetime
 
 def clean_filename(title):
-    return re.sub(r'[^\w-]', '', title.lower())[:50]
+    return re.sub(r'[^\w-]', '', title.lower())[:40]  # Reduced length
 
+# Inside the loop:
+filename = f"_posts/{date}-{clean_filename(article['title']}.md"
 with open("articles.json") as f:
     articles = json.load(f)
 
