@@ -60,8 +60,12 @@ jobs:
           keep_files: false
           force_orphan: true
 
-      - name: Remove .nojekyll file from gh-pages
-        if: always()
+      - name: Ensure gh-pages directory is clean
+        run: |
+          rm -rf gh-pages
+          mkdir gh-pages
+
+      - name: Clone gh-pages branch and remove .nojekyll
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
@@ -74,6 +78,5 @@ jobs:
 
       - name: Print contents of gh-pages branch
         run: |
-          git clone --single-branch --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
           cd gh-pages
           ls -la && cat index.md && cat _config.yml
