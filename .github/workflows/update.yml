@@ -7,11 +7,12 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Ensure the workflow runs only on the main branch
     permissions:
       contents: write
 
     steps:
-      - name: Checkout code
+      - name: Check out code
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -28,10 +29,17 @@ jobs:
       - name: Generate posts
         run: python generate_posts.py
 
+      - name: Prepare deployment
+        run: |
+          mkdir deploy
+          cp -r _posts deploy/
+          cp index.md _config.yml deploy/
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
+          publish_branch: gh-pages
+          publish_dir: ./deploy
           keep_files: false
           force_orphan: true
