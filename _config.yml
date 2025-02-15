@@ -2,10 +2,10 @@ title: AI News Blog
 email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   A blog with the latest news on Artificial Intelligence.
-baseurl: "" # the subpath of your site, e.g. /blog
+baseurl: "/ai-news-blog" # the subpath of your site, e.g. /blog
 url: "https://ai-news-tester.github.io"
 twitter_username: your-twitter-handle
-github_username:  your-github-username
+github_username:  ai-news-tester
 
 # Build settings
 markdown: kramdown
