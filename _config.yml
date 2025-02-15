@@ -1,14 +1,12 @@
 title: AI News Blog
 email: your-email@example.com
 description: "A blog with the latest news on Artificial Intelligence."
-baseurl: "/ai-news-blog" # the subpath of your site, e.g. /blog
+baseurl: "/ai-news-blog"  # Adjust if using a project site
 url: "https://ai-news-tester.github.io"
-twitter_username: your-twitter-handle
-github_username:  ai-news-tester
-
-# Build settings
-markdown: kramdown
-highlighter: rouge
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-seo-tag
+
+markdown: kramdown
+highlighter: rouge
