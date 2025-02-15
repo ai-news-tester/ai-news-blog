@@ -34,7 +34,8 @@ jobs:
           mkdir deploy
           cp -r _posts deploy/
           cp index.md _config.yml deploy/
-          rm -f .nojekyll  # Remove .nojekyll file if it exists
+          # Ensure .nojekyll is not included in the deployment
+          rm -f deploy/.nojekyll
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
