@@ -29,11 +29,26 @@ jobs:
       - name: Generate posts
         run: python generate_posts.py
 
+      - name: Print contents of _posts directory
+        run: ls -la _posts
+
+      - name: Print contents of each post file
+        run: cat _posts/*.md
+
+      - name: Print contents of index.md
+        run: cat index.md
+
+      - name: Print contents of _config.yml
+        run: cat _config.yml
+
       - name: Prepare deployment
         run: |
           mkdir deploy
           cp -r _posts deploy/
           cp index.md _config.yml deploy/
+
+      - name: Print deploy directory contents before deploy
+        run: ls -la deploy && cat deploy/index.md && cat deploy/_config.yml
 
       - name: Deploy to GitHub Pages
         id: deploy
@@ -44,3 +59,21 @@ jobs:
           publish_dir: ./deploy
           keep_files: false
           force_orphan: true
+
+      - name: Remove .nojekyll file from gh-pages
+        if: always()
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git clone --single-branch --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+          cd gh-pages
+          rm -f .nojekyll
+          git add .nojekyll
+          git commit -m "Remove .nojekyll"
+          git push origin gh-pages
+
+      - name: Print contents of gh-pages branch
+        run: |
+          git clone --single-branch --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+          cd gh-pages
+          ls -la && cat index.md && cat _config.yml
