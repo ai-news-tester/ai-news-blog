@@ -9,6 +9,7 @@ github_username:  ai-news-tester
 
 # Build settings
 markdown: kramdown
+highlighter: rouge
 theme: minima
 plugins:
   - jekyll-feed
