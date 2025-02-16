@@ -4,8 +4,7 @@ import json
 import hashlib
 import os
 
-# Configuration
-MAX_ARTICLES = 15  # Total articles per run
+MAX_ARTICLES = 15
 seen_urls = set()
 
 def get_hash(url):
