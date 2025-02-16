@@ -31,9 +31,9 @@ jobs:
       - name: Manually create a test post
         run: |
           echo "---
-title: \"Test Post\"
+title: 'Test Post'
 date: 2025-02-15
-source: \"Test Source\"
+source: 'Test Source'
 ---
 This is a test post to check if posts are being displayed correctly." > _posts/2025-02-15-test-post.md
 
@@ -54,13 +54,13 @@ This is a test post to check if posts are being displayed correctly." > _posts/2
           mkdir deploy
           cp -r _posts deploy/
           cp index.md _config.yml deploy/
-          rm -f deploy/.nojekyll  # Ensure .nojekyll is not included in the deployment
+          rm -f deploy/.nojekyll
 
       - name: Print deploy directory contents before deploy
-        run: ls -la deploy && cat deploy/index.md && cat deploy/_config.yml
+        run: |
+          ls -la deploy && cat deploy/index.md && cat deploy/_config.yml
 
       - name: Deploy to GitHub Pages
-        id: deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -76,13 +76,13 @@ This is a test post to check if posts are being displayed correctly." > _posts/2
 
       - name: Clone gh-pages branch and remove .nojekyll
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git clone --single-branch --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
           cd gh-pages
           rm -f .nojekyll
           git add .nojekyll
-          git commit -m "Remove .nojekyll"
+          git commit -m 'Remove .nojekyll'
           git push origin gh-pages
 
       - name: Print contents of gh-pages branch
