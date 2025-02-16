@@ -1,7 +1,7 @@
 title: AI News Blog
 email: your-email@example.com
 description: "A blog with the latest news on Artificial Intelligence."
-baseurl: "/ai-news-blog"  # Adjust if using a project site
+baseurl: "/ai-news-blog"
 url: "https://ai-news-tester.github.io"
 theme: minima
 plugins:
