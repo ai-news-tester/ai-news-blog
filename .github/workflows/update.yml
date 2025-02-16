@@ -39,10 +39,12 @@ source: 'Test Source'
 This is a test post to check if posts are being displayed correctly." > _posts/2025-02-15-test-post.md
 
       - name: Print contents of _posts directory
-        run: ls -la _posts
+        run: |
+          ls -la _posts
 
       - name: Print contents of each post file
-        run: cat _posts/*.md
+        run: |
+          for file in _posts/*.md; do cat "$file"; done
 
       - name: Print contents of index.md
         run: cat index.md
@@ -89,4 +91,4 @@ This is a test post to check if posts are being displayed correctly." > _posts/2
       - name: Print contents of gh-pages branch
         run: |
           cd gh-pages
-          ls -la && cat index.md && cat _config.yml && ls -la _posts && cat _posts/*.md
+          ls -la && cat index.md && cat _config.yml && ls -la _posts && for file in _posts/*.md; do cat "$file"; done
