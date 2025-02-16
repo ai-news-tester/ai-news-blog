@@ -28,36 +28,12 @@ jobs:
       - name: Generate posts
         run: python generate_posts.py
 
-      - name: Manually create a test post
-        run: |
-          mkdir -p _posts
-          echo "---
-title: 'Test Post'
-date: 2025-02-15
-source: 'Test Source'
----
-This is a test post to check if posts are being displayed correctly." > _posts/2025-02-15-test-post.md
-
-      - name: Print contents of each post file
-        run: |
-          for file in _posts/*.md; do cat "$file"; done
-
-      - name: Print contents of index.md
-        run: cat index.md
-
-      - name: Print contents of _config.yml
-        run: cat _config.yml
-
       - name: Prepare deployment
         run: |
           mkdir deploy
           cp -r _posts deploy/
           cp index.md _config.yml deploy/
           rm -f deploy/.nojekyll
-
-      - name: Print deploy directory contents before deploy
-        run: |
-          ls -la deploy && cat deploy/index.md && cat deploy/_config.yml
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
