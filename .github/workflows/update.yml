@@ -30,6 +30,7 @@ jobs:
 
       - name: Manually create a test post
         run: |
+          mkdir -p _posts
           echo "---
 title: 'Test Post'
 date: 2025-02-15
