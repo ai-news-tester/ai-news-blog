@@ -38,10 +38,6 @@ source: 'Test Source'
 ---
 This is a test post to check if posts are being displayed correctly." > _posts/2025-02-15-test-post.md
 
-      - name: Print contents of _posts directory
-        run: |
-          ls -la _posts
-
       - name: Print contents of each post file
         run: |
           for file in _posts/*.md; do cat "$file"; done
