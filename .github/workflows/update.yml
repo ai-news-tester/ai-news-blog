@@ -43,24 +43,3 @@ jobs:
           publish_dir: ./deploy
           keep_files: false
           force_orphan: true
-
-      - name: Ensure gh-pages directory is clean
-        run: |
-          rm -rf gh-pages
-          mkdir gh-pages
-
-      - name: Clone gh-pages branch and remove .nojekyll
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git clone --single-branch --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
-          cd gh-pages
-          rm -f .nojekyll
-          git add .nojekyll
-          git commit -m 'Remove .nojekyll'
-          git push origin gh-pages
-
-      - name: Print contents of gh-pages branch
-        run: |
-          cd gh-pages
-          ls -la && cat index.md && cat _config.yml && ls -la _posts && for file in _posts/*.md; do cat "$file"; done
