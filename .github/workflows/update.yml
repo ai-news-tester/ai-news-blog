@@ -28,27 +28,17 @@ jobs:
       - name: Generate posts
         run: python generate_posts.py
 
-      - name: Manually create a test post
-        run: |
-          mkdir -p _posts
-          echo "---
-title: 'Test Post'
-date: 2025-02-15
-source: 'Test Source'
----
-This is a test post to check if posts are being displayed correctly." > _posts/2025-02-15-test-post.md
-
       - name: Verify _posts directory contents
         run: ls -la _posts
 
-      - name: Verify each post file
+      - name: Print contents of each post file
         run: |
           for file in _posts/*.md; do cat "$file"; done
 
-      - name: Verify index.md
+      - name: Print contents of index.md
         run: cat index.md
 
-      - name: Verify _config.yml
+      - name: Print contents of _config.yml
         run: cat _config.yml
 
       - name: Prepare deployment
@@ -58,7 +48,7 @@ This is a test post to check if posts are being displayed correctly." > _posts/2
           cp index.md _config.yml deploy/
           rm -f deploy/.nojekyll
 
-      - name: Verify deploy directory contents before deploy
+      - name: Print deploy directory contents before deploy
         run: |
           ls -la deploy && cat deploy/index.md && cat deploy/_config.yml
 
@@ -87,7 +77,7 @@ This is a test post to check if posts are being displayed correctly." > _posts/2
           git commit -m 'Remove .nojekyll'
           git push origin gh-pages
 
-      - name: Verify contents of gh-pages branch
+      - name: Print contents of gh-pages branch
         run: |
           cd gh-pages
           ls -la && cat index.md && cat _config.yml && ls -la _posts && for file in _posts/*.md; do cat "$file"; done
