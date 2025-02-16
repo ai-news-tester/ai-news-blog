@@ -28,6 +28,15 @@ jobs:
       - name: Generate posts
         run: python generate_posts.py
 
+      - name: Manually create a test post
+        run: |
+          echo "---
+title: \"Test Post\"
+date: 2025-02-15
+source: \"Test Source\"
+---
+This is a test post to check if posts are being displayed correctly." > _posts/2025-02-15-test-post.md
+
       - name: Print contents of _posts directory
         run: ls -la _posts
 
@@ -55,7 +64,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages  # Ensure we are deploying to the correct branch
+          publish_branch: gh-pages
           publish_dir: ./deploy
           keep_files: false
           force_orphan: true
@@ -79,4 +88,4 @@ jobs:
       - name: Print contents of gh-pages branch
         run: |
           cd gh-pages
-          ls -la && cat index.md && cat _config.yml
+          ls -la && cat index.md && cat _config.yml && ls -la _posts && cat _posts/*.md
